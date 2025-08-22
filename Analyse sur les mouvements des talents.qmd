@@ -132,7 +132,7 @@ ggplot(total_inflow_country, aes(x = reorder(country_of_destination, -total_coun
   geom_text(aes(label = scales::comma(total_count)), 
             vjust = -0.3, size = 3) +
   labs(title = "Total Inflow by Country",
-       x = "country_of_destination",
+       x = "country of destination",
        y = "Total Inflow Count") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -201,7 +201,7 @@ ggplot() +
   scale_color_gradientn(
     colors = c("#E5F5E0", "#A1D99B", "#41AB5D", "#006D2C", "#00441B"),
     trans = "log10",
-    name = "Nombre de Talents",
+    name = "Nombre de mouvements",
     breaks = scales::log_breaks(n = 6)(range(migration_arrows$count)), 
     labels = scales::comma
   ) +
@@ -231,6 +231,7 @@ ggplot() +
     ylim = c(-60, 80),
     expand = FALSE)
 ```
+
 
 ## Graphique 3 : Flux de talents par année (barres groupées)
 
@@ -529,16 +530,6 @@ model_2 <- plm(
   cluster = "group"  
 )
 
-#  Régressions -- net_flow
-
-model_3 <- plm(
-  formula = nanometer ~ net_flow,  
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
 
 #  Régressions -- inflow_count (lag1)
 
@@ -553,16 +544,6 @@ model_1lag1 <- plm(
 
 model_2lag1 <- plm(
   nanometer ~ lag(outflow_count, 1),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
-
-
-model_3lag1 <- plm(
-  nanometer ~ lag(net_flow, 1),   
   data = panel_data,
   index = c("country", "year"),
   model = "within",
@@ -593,16 +574,6 @@ model_2lag2 <- plm(
 )
 
 
-model_3lag2 <- plm(
-  nanometer ~ lag(net_flow, 2),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
-
-
 #  Régressions -- lag3
 
 model_1lag3 <- plm(
@@ -624,15 +595,6 @@ model_2lag3 <- plm(
 )
 
 
-model_3lag3 <- plm(
-  nanometer ~ lag(net_flow, 3),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
-
 #  Régressions -- lag4
 
 model_1lag4 <- plm(
@@ -653,17 +615,6 @@ model_2lag4 <- plm(
   effect = "individual",
   cluster = "group"  
 )
-
-
-model_3lag4 <- plm(
-  nanometer ~ lag(net_flow, 4),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
-
 
 
 #  Régressions -- lag5
@@ -689,20 +640,10 @@ model_2lag5 <- plm(
 
 
 
-model_3lag5 <- plm(
-  nanometer ~ lag(net_flow, 5),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
-
-
 # Tableau récapitulatif des résultats de régressions
 
 models_inflow <- list(
-  "Inflow (t)"     = model_1,
+  "Inflow (t))"     = model_1,
   "Inflow (t-1)"   = model_1lag1,
   "Inflow (t-2)"   = model_1lag2,
   "Inflow (t-3)"   = model_1lag3,
@@ -720,15 +661,6 @@ models_outflow <- list(
   "Outflow (t-5)"  = model_2lag5
 )
 
-models_netflow <- list(
-  "Net Flow (t)"   = model_3,
-  "Net Flow (t-1)" = model_3lag1,
-  "Net Flow (t-2)" = model_3lag2,
-  "Net Flow (t-3)" = model_3lag3,
-  "Net Flow (t-4)" = model_3lag4,
-  "Net Flow (t-5)" = model_3lag5
-)
-
 
 modelsummary(
   models_inflow,
@@ -736,7 +668,7 @@ modelsummary(
   fmt = 3,                      
   gof_map = c("nobs", "r.squared"), 
   output = "markdown",          
-  title = "Fixed Effects Panel Regressions: Semiconductor Node vs Talent Inflows"
+  title = "Impact of Talent Inflows on Semiconductor Process Node Advancement (Country Fixed Effects Panel Regression)"
 )
 
 modelsummary(
@@ -745,17 +677,9 @@ modelsummary(
   fmt = 3,                      
   gof_map = c("nobs", "r.squared"), 
   output = "markdown",          
-  title = "Fixed Effects Panel Regressions: Semiconductor Node vs Talent Outflows"
+  title = "Impact of Talent Outflows on Semiconductor Process Node Advancement (Country Fixed Effects Panel Regression)"
 )
 
-modelsummary(
-  models_netflow,
-  stars = TRUE,                
-  fmt = 3,                      
-  gof_map = c("nobs", "r.squared"), 
-  output = "markdown",          
-  title = "Fixed Effects Panel Regressions: Semiconductor Node vs Talent Netflows"
-)
 ```
 
 ### Régressions de panel : flux de talents → taille de nœud (nm), retards 1–5 ans (à effets fixes individuels et temporels (pays et années))
@@ -783,16 +707,6 @@ model2_2 <- plm(
   cluster = "group"
 )
 
-#  Régressions -- net_flow
-
-model2_3 <- plm(
-  formula = nanometer ~ net_flow,  
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
 
 #  Régressions -- inflow_count (lag1)
 
@@ -807,16 +721,6 @@ model2_1lag1 <- plm(
 
 model2_2lag1 <- plm(
   nanometer ~ lag(outflow_count, 1),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
-
-model2_3lag1 <- plm(
-  nanometer ~ lag(net_flow, 1),   
   data = panel_data,
   index = c("country", "year"),
   model = "within",
@@ -847,15 +751,6 @@ model2_2lag2 <- plm(
 )
 
 
-model2_3lag2 <- plm(
-  nanometer ~ lag(net_flow, 2),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
 
 #  Régressions -- lag3
 
@@ -870,16 +765,6 @@ model2_1lag3 <- plm(
 
 model2_2lag3 <- plm(
   nanometer ~ lag(outflow_count, 3),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
-
-model2_3lag3 <- plm(
-  nanometer ~ lag(net_flow, 3),   
   data = panel_data,
   index = c("country", "year"),
   model = "within",
@@ -909,17 +794,6 @@ model2_2lag4 <- plm(
 )
 
 
-model2_3lag4 <- plm(
-  nanometer ~ lag(net_flow, 4),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
-
-
 #  Régressions -- lag5
 
 model2_1lag5 <- plm(
@@ -943,16 +817,6 @@ model2_2lag5 <- plm(
 
 
 
-model2_3lag5 <- plm(
-  nanometer ~ lag(net_flow, 5),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
-
 # Tableau récapitulatif des résultats de régressions
 
 models2_inflow <- list(
@@ -974,14 +838,6 @@ models2_outflow <- list(
   "Outflow (t-5)"  = model2_2lag5
 )
 
-models2_netflow <- list(
-  "Net Flow (t)"   = model2_3,
-  "Net Flow (t-1)" = model2_3lag1,
-  "Net Flow (t-2)" = model2_3lag2,
-  "Net Flow (t-3)" = model2_3lag3,
-  "Net Flow (t-4)" = model2_3lag4,
-  "Net Flow (t-5)" = model2_3lag5
-)
 
 
 modelsummary(
@@ -1002,57 +858,58 @@ modelsummary(
   title = "Two-Way Fixed Effects Panel Regressions (Country & Year): Semiconductor Node Size vs. Talent Outflows, Lags 1–5 Years"
 )
 
-modelsummary(
-  models2_netflow,
-  stars = TRUE,                
-  fmt = 3,                      
-  gof_map = c("nobs", "r.squared"), 
-  output = "markdown",          
-  title = "Two-Way Fixed Effects Panel Regressions (Country & Year): Semiconductor Node Size vs. Talent Net Flows, Lags 1–5 Years"
-)
 ```
 
 ### Régressions de panel : flux de talents → taux de rendement, retards 1–5 ans (à effets fixes individuels (pays))
 
 ```{r}
-# Traitement de taux de rendement
 fill_group <- function(df) {
   df <- df |> arrange(year)
   y   <- df$yield_rate
   yrs <- df$year
   
   known_idx <- which(!is.na(y))
+  
+  # Cas A : Aucune valeur connue dans le groupe -> Remplissage linéaire de 0.4 à 0.9
   if (length(known_idx) == 0) {
+    y <- seq(0.4, 0.9, length.out = nrow(df))
     df$yield_rate_filled <- y
     return(df)
   }
   
-  first_idx <- known_idx[1]
+  first_known_idx <- min(known_idx)
+  last_known_idx <- max(known_idx)
   
- # Remplissage linéaire entre deux valeurs connues adjacentes
- if (length(known_idx) >= 2) {
-   for (m in seq_len(length(known_idx) - 1)) {
-     i <- known_idx[m]
-     j <- known_idx[m + 1]
-     if ((j - i) > 1) {
-       y0 <- y[i]
-       y1 <- y[j]
-       n  <- j - i
-       for (k in 1:(n - 1)) {
-         y[i + k] <- y0 + (y1 - y0) * (k / n)
-       }
-     }
-   }
- }
+  # Cas B : Deux valeurs connues ou plus -> Interpolation linéaire entre les valeurs connues adjacentes
+  if (length(known_idx) >= 2) {
+    for (m in seq_len(length(known_idx) - 1)) {
+      i <- known_idx[m]
+      j <- known_idx[m + 1]
+      if ((j - i) > 1) {
+        y0 <- y[i]; y1 <- y[j]
+        n  <- j - i
+        for (k in 1:(n - 1)) {
+          y[i + k] <- y0 + (y1 - y0) * (k / n)
+        }
+      }
+    }
+  }
   
-  # Si une seule valeur connue et toutes les valeurs suivantes sont manquantes,
-  # remplir linéairement jusqu’à ce que la dernière année atteigne 0.9
-  if (length(known_idx) == 1 && first_idx < nrow(df)) {
-    last_idx <- nrow(df)
-    y_last   <- 0.9
-    steps    <- last_idx - first_idx
+  # Cas C : Traitement des valeurs manquantes avant la première valeur connue (remontée jusqu'à 0.4)
+  if (first_known_idx > 1) {
+    y_first_target <- 0.4
+    steps <- first_known_idx - 1
     for (k in 1:steps) {
-      y[first_idx + k] <- y[first_idx] + (y_last - y[first_idx]) * (k / steps)
+      y[k] <- y_first_target + (y[first_known_idx] - y_first_target) * ((k - 1) / steps)
+    }
+  }
+  
+  # Cas D : Traitement des valeurs manquantes après la dernière valeur connue (descente jusqu'à 0.9)
+  if (last_known_idx < nrow(df)) {
+    y_last_target <- 0.9
+    steps <- nrow(df) - last_known_idx
+    for (k in 1:steps) {
+      y[last_known_idx + k] <- y[last_known_idx] + (y_last_target - y[last_known_idx]) * (k / steps)
     }
   }
   
@@ -1060,12 +917,17 @@ fill_group <- function(df) {
   df
 }
 
+# Application de la fonction
 panel_data_filled <- panel_data |>
   arrange(country, nanometer, year) |>
   group_by(country, nanometer) |>
   group_modify(~fill_group(.x)) |>
   ungroup() |>
-  mutate(yield_rate_filled = yield_rate_filled * 100)
+  mutate(yield_rate_filled = yield_rate_filled * 100) |>
+  arrange(country, nanometer, year) |>
+  group_by(country, nanometer)
+
+
 ```
 
 ```{r}
@@ -1092,16 +954,7 @@ model3_2 <- plm(
   cluster = "group"  
 )
 
-#  Régressions -- net_flow
 
-model3_3 <- plm(
-  formula = yield_rate_filled ~ net_flow + factor(nanometer),  
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
 
 #  Régressions -- inflow_count (lag1)
 
@@ -1116,16 +969,6 @@ model3_1lag1 <- plm(
 
 model3_2lag1 <- plm(
   yield_rate_filled ~ lag(outflow_count, 1) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
-
-
-model3_3lag1 <- plm(
-  yield_rate_filled ~ lag(net_flow, 1) + factor(nanometer),   
   data = panel_data_filled,
   index = c("country", "year"),
   model = "within",
@@ -1156,15 +999,6 @@ model3_2lag2 <- plm(
 )
 
 
-model3_3lag2 <- plm(
-  yield_rate_filled ~ lag(net_flow, 2) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
-
 
 #  Régressions -- lag3
 
@@ -1187,14 +1021,6 @@ model3_2lag3 <- plm(
 )
 
 
-model3_3lag3 <- plm(
-  yield_rate_filled ~ lag(net_flow, 3) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
 
 #  Régressions -- lag4
 
@@ -1210,16 +1036,6 @@ model3_1lag4 <- plm(
 
 model3_2lag4 <- plm(
   yield_rate_filled ~ lag(outflow_count, 4) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
-
-
-model3_3lag4 <- plm(
-  yield_rate_filled ~ lag(net_flow, 4) + factor(nanometer),   
   data = panel_data_filled,
   index = c("country", "year"),
   model = "within",
@@ -1252,16 +1068,6 @@ model3_2lag5 <- plm(
 
 
 
-model3_3lag5 <- plm(
-  yield_rate_filled ~ lag(net_flow, 5) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "individual",
-  cluster = "group"  
-)
-
-
 # Tableau récapitulatif des résultats de régressions
 
 models3_inflow <- list(
@@ -1281,15 +1087,6 @@ models3_outflow <- list(
   "Outflow (t-3)"  = model3_2lag3,
   "Outflow (t-4)"  = model3_2lag4,
   "Outflow (t-5)"  = model3_2lag5
-)
-
-models3_netflow <- list(
-  "Net Flow (t)"   = model3_3,
-  "Net Flow (t-1)" = model3_3lag1,
-  "Net Flow (t-2)" = model3_3lag2,
-  "Net Flow (t-3)" = model3_3lag3,
-  "Net Flow (t-4)" = model3_3lag4,
-  "Net Flow (t-5)" = model3_3lag5
 )
 
 
@@ -1313,15 +1110,6 @@ modelsummary(
   coef_omit = "factor\\(nanometer\\)"
 )
 
-modelsummary(
-  models3_netflow,
-  stars = TRUE,                
-  fmt = 3,                      
-  gof_map = c("nobs", "r.squared"), 
-  output = "markdown",          
-  title = "Fixed Effects Panel Regressions: Yield Rate vs Talent Netflows",
-  coef_omit = "factor\\(nanometer\\)"
-)
 ```
 
 ### Régressions de panel : flux de talents → taux de rendement, retards 1–5 ans, (à effets fixes individuels et temporels (pays et années))
@@ -1348,16 +1136,6 @@ model4_2 <- plm(
   cluster = "group"
 )
 
-#  Régressions -- net_flow
-
-model4_3 <- plm(
-  formula = yield_rate_filled ~ net_flow + factor(nanometer),  
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
 
 #  Régressions -- inflow_count (lag1)
 
@@ -1379,15 +1157,6 @@ model4_2lag1 <- plm(
   cluster = "group"
 )
 
-
-model4_3lag1 <- plm(
-  yield_rate_filled ~ lag(net_flow, 1) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
 
 
 #  Régressions -- lag2
@@ -1412,15 +1181,6 @@ model4_2lag2 <- plm(
 )
 
 
-model4_3lag2 <- plm(
-  yield_rate_filled ~ lag(net_flow, 2) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
 
 #  Régressions -- lag3
 
@@ -1443,15 +1203,6 @@ model4_2lag3 <- plm(
 )
 
 
-model4_3lag3 <- plm(
-  yield_rate_filled ~ lag(net_flow, 3) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
 #  Régressions -- lag4
 
 model4_1lag4 <- plm(
@@ -1466,16 +1217,6 @@ model4_1lag4 <- plm(
 
 model4_2lag4 <- plm(
   yield_rate_filled ~ lag(outflow_count, 4) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
-
-model4_3lag4 <- plm(
-  yield_rate_filled ~ lag(net_flow, 4) + factor(nanometer),   
   data = panel_data_filled,
   index = c("country", "year"),
   model = "within",
@@ -1508,15 +1249,6 @@ model4_2lag5 <- plm(
 
 
 
-model4_3lag5 <- plm(
-  yield_rate_filled ~ lag(net_flow, 5) + factor(nanometer),   
-  data = panel_data_filled,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
 
 # Tableau récapitulatif des résultats de régressions
 
@@ -1539,14 +1271,6 @@ models4_outflow <- list(
   "Outflow (t-5)"  = model4_2lag5
 )
 
-models4_netflow <- list(
-  "Net Flow (t)"   = model4_3,
-  "Net Flow (t-1)" = model4_3lag1,
-  "Net Flow (t-2)" = model4_3lag2,
-  "Net Flow (t-3)" = model4_3lag3,
-  "Net Flow (t-4)" = model4_3lag4,
-  "Net Flow (t-5)" = model4_3lag5
-)
 
 
 modelsummary(
@@ -1569,15 +1293,7 @@ modelsummary(
   coef_omit = "factor\\(nanometer\\)"
 )
 
-modelsummary(
-  models4_netflow,
-  stars = TRUE,                
-  fmt = 3,                      
-  gof_map = c("nobs", "r.squared"), 
-  output = "markdown",          
-  title = "Two-Way Fixed Effects Panel Regressions (Country & Year): Yield Rate vs Talent Netflows, Lags 1–5 Years",
-  coef_omit = "factor\\(nanometer\\)"
-)
+
 
 ```
 
@@ -1942,7 +1658,7 @@ raw_log_models_netflow <- list(
   "Net Flow (t-5)" = raw_log_model3_lag5
 )
 
-# 输出结果
+
 modelsummary(
   raw_log_models_inflow,
   stars = TRUE,                
@@ -2130,4 +1846,3 @@ modelsummary(
 
 ```
 
-distance
