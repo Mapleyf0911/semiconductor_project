@@ -142,7 +142,7 @@ ggplot(total_inflow_country, aes(x = reorder(country_of_destination, -total_coun
 
 ## Graphique 2 : Carte des flux migratoires — origines → destinations
 
-```{r}
+```{r, fig.width=10, fig.height=8, out.width="100%", fig.retina=2, dev="png"}
 # Charger les données géographiques des pays
 world <- ne_countries(scale = "medium", returnclass = "sf") |>
   st_transform(crs = "+proj=longlat +datum=WGS84")
@@ -323,7 +323,7 @@ ggplot(flow_matrix, aes(x = to, y = from, fill = total_count_log)) +
 
 ## Graphique 5 : Carte des flux migratoires en Asie depuis 2015 — origines → destinations
 
-```{r}
+```{r, fig.width=9, fig.height=8, out.width="100%", fig.retina=2, dev="png"}
 # Extraire la carte des pays asiatiques
 asia <- ne_countries(scale = "medium", returnclass = "sf") |>
   filter(region_un == "Asia") |>
