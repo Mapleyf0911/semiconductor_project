@@ -1297,7 +1297,7 @@ modelsummary(
 
 ```
 
-### Régressions log-linear : flux de talents → taille de nœud (nm), retards 1–5 ans (à effets fixes individuels (pays))
+### Régressions linear-log : flux de talents → taille de nœud (nm), retards 1–5 ans (à effets fixes individuels (pays))
 
 ```{r}
 panel_data$log_inflow_count <- log(panel_data$inflow_count + 1)
@@ -1456,7 +1456,7 @@ modelsummary(
 )
 ```
 
-### Régressions linear-log : flux de talents → taille de nœud (nm), retards 1–5 ans (à effets fixes individuels (pays))
+### Régressions log-linear : flux de talents → taille de nœud (nm), retards 1–5 ans (à effets fixes individuels (pays))
 
 ```{r}
 panel_data$log_nanometer <- log(panel_data$nanometer + 1) 
@@ -1481,15 +1481,6 @@ raw_log_model2 <- plm(
 )
 
 
-raw_log_model3 <- plm(
-  formula = log_nanometer ~ net_flow,  
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
 
 raw_log_model1_lag1 <- plm(
   log_nanometer ~ lag(inflow_count, 1),   
@@ -1502,15 +1493,6 @@ raw_log_model1_lag1 <- plm(
 
 raw_log_model2_lag1 <- plm(
   log_nanometer ~ lag(outflow_count, 1),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
-raw_log_model3_lag1 <- plm(
-  log_nanometer ~ lag(net_flow, 1),   
   data = panel_data,
   index = c("country", "year"),
   model = "within",
@@ -1537,15 +1519,6 @@ raw_log_model2_lag2 <- plm(
   cluster = "group"
 )
 
-raw_log_model3_lag2 <- plm(
-  log_nanometer ~ lag(net_flow, 2),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
 
 raw_log_model1_lag3 <- plm(
   log_nanometer ~ lag(inflow_count, 3),   
@@ -1565,14 +1538,6 @@ raw_log_model2_lag3 <- plm(
   cluster = "group"
 )
 
-raw_log_model3_lag3 <- plm(
-  log_nanometer ~ lag(net_flow, 3),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
 
 
 raw_log_model1_lag4 <- plm(
@@ -1586,15 +1551,6 @@ raw_log_model1_lag4 <- plm(
 
 raw_log_model2_lag4 <- plm(
   log_nanometer ~ lag(outflow_count, 4),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
-
-raw_log_model3_lag4 <- plm(
-  log_nanometer ~ lag(net_flow, 4),   
   data = panel_data,
   index = c("country", "year"),
   model = "within",
@@ -1621,16 +1577,8 @@ raw_log_model2_lag5 <- plm(
   cluster = "group"
 )
 
-raw_log_model3_lag5 <- plm(
-  log_nanometer ~ lag(net_flow, 5),   
-  data = panel_data,
-  index = c("country", "year"),
-  model = "within",
-  effect = "twoways",    
-  cluster = "group"
-)
 
-# 创建结果表格
+
 raw_log_models_inflow <- list(
   "Inflow (t)"     = raw_log_model1,
   "Inflow (t-1)"   = raw_log_model1_lag1,
@@ -1647,15 +1595,6 @@ raw_log_models_outflow <- list(
   "Outflow (t-3)"  = raw_log_model2_lag3,
   "Outflow (t-4)"  = raw_log_model2_lag4,
   "Outflow (t-5)"  = raw_log_model2_lag5
-)
-
-raw_log_models_netflow <- list(
-  "Net Flow (t)"   = raw_log_model3,
-  "Net Flow (t-1)" = raw_log_model3_lag1,
-  "Net Flow (t-2)" = raw_log_model3_lag2,
-  "Net Flow (t-3)" = raw_log_model3_lag3,
-  "Net Flow (t-4)" = raw_log_model3_lag4,
-  "Net Flow (t-5)" = raw_log_model3_lag5
 )
 
 
@@ -1677,18 +1616,8 @@ modelsummary(
   title = "Two-Way Fixed Effects: Log Semiconductor Node Size vs. Raw Talent Outflows, Lags 1–5 Years"
 )
 
-modelsummary(
-  raw_log_models_netflow,
-  stars = TRUE,                
-  fmt = 3,                      
-  gof_map = c("nobs", "r.squared"), 
-  output = "markdown",          
-  title = "Two-Way Fixed Effects: Log Semiconductor Node Size vs. Raw Talent Net Flows, Lags 1–5 Years"
-)
-
 
 ```
-
 ### \*Régressions log-log : flux de talents → taille de nœud (nm), retards 1–5 ans (à effets fixes individuels (pays))
 
 ```{r}
